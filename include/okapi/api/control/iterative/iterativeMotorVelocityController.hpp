@@ -70,7 +70,7 @@ class IterativeMotorVelocityController : public IterativeVelocityController<doub
   double getMinOutput() override;
 
   /**
-   * Returns the last error of the controller. Does not update when disabled.
+   * Returns the last error of the controller.
    */
   double getError() const override;
 

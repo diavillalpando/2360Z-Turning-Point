@@ -110,7 +110,7 @@ class IterativePosPIDController : public IterativePositionController<double, dou
   double getMinOutput() override;
 
   /**
-   * Returns the last error of the controller. Does not update when disabled.
+   * Returns the last error of the controller.
    */
   double getError() const override;
 

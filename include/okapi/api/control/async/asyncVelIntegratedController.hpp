@@ -36,7 +36,7 @@ class AsyncVelIntegratedController : public AsyncVelocityController<double, doub
   double getTarget() override;
 
   /**
-   * Returns the last error of the controller. Does not update when disabled.
+   * Returns the last error of the controller.
    */
   double getError() const override;
 

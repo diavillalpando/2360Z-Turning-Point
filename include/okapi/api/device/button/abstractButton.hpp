@@ -7,10 +7,8 @@
  */
 #pragma once
 
-#include "okapi/api/control/controllerInput.hpp"
-
 namespace okapi {
-class AbstractButton : public ControllerInput<bool> {
+class AbstractButton {
   public:
   virtual ~AbstractButton();
 
@@ -36,13 +34,5 @@ class AbstractButton : public ControllerInput<bool> {
    * method was called.
    **/
   virtual bool changedToReleased() = 0;
-
-  /**
-   * Get the sensor value for use in a control loop. This method might be automatically called in
-   * another thread by the controller.
-   *
-   * @return the current sensor value. This is the same as the output of the pressed() method.
-   */
-  virtual bool controllerGet() override;
 };
 } // namespace okapi
