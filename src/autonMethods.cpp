@@ -194,23 +194,7 @@ void flip(){
 | --Shoot Method--
 |   - Automated shot for the flywheel [launch the ball once the flywheel reaches the given speed]
 ------------------------------------------------------------------------------------------------*/
-void shootNew(int rpm){
-  pros::Motor flywheel(flywheelPort);
-  pros::Motor index(indexPort, true);
 
-  flywheel.move_velocity(0);
-  int indexTurn = 350;
-
-  while(flywheel.get_actual_velocity()>(rpm-20)){delay(10);}
-  flywheel.move_velocity(200);
-  while(flywheel.get_actual_velocity()<rpm){delay(10);}
-
-  index.tare_position();
-  index.move_absolute(indexTurn+10, 200);
-  while(index.get_position()<=indexTurn){}
-  flywheel.move_velocity(0);
-  index.move_velocity(0);
-}
 void shoot(int rpm){
 
   pros::Motor flywheel(flywheelPort);

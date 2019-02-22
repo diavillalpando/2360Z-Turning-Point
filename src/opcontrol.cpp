@@ -58,7 +58,7 @@ liftR.tare_position();
 
 		//--Flywheel--//
 		flywheel.move_velocity(100*partner.up);
-		
+
 		if(partner.btnA && partner.up ){
 			shoot(shotA);
 		}
@@ -70,7 +70,7 @@ liftR.tare_position();
 		}
 
     //--Intake/Indexer--//
-		int reverseButt = 2*(partner.down)-1;
+		int reverseButt = -2*(partner.down)+1;
 		index.move_velocity(80*partner.btnY*reverseButt*(!pros::c::adi_digital_read(indexSensor)));
 		intake.move_velocity(200*partner.btnY*reverseButt);
 
