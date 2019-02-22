@@ -84,9 +84,8 @@ void turn(int degrees,int speed){
 --------------------------------------------------------------------------------------------------------*/
 void lift(int level, bool wait){
 
-  pros::Motor liftL(liftLPort,true);
+  pros::Motor liftL(liftLPort, true);
 	pros::Motor liftR(liftRPort);
-
 
 	int liftSpeed = 200;
 	double lowPost = 1700;
@@ -94,41 +93,22 @@ void lift(int level, bool wait){
 	double max = 2400;
   int levelTolerance = 10;
 
-
-  if(level == -2){
-    int newLevel = 3;
-    int position = liftR.get_position();
-    newLevel = 2*(lowPost<=position&&position < highPost-10) + 1*(0<=position&&position <= lowPost);
-    level = newLevel;
-  }
-  if(level == -1){
-    int newLevel = 0;
-    int position = liftR.get_position();
-    newLevel = 2*(highPost<=position&&position <= max) + 1*(lowPost<position&&position <= highPost);
-    level = newLevel;
-  }
   if(!liftCalibrated){ //zeros the lift if it is the first time the method has been called
     liftL.move_velocity(-50);
     liftR.move_velocity(-50);
-    while(pros::c::adi_digital_read(liftSensor)!=1){
-      delay(5);
-    }
+    delay(500);
     liftR.move_velocity(0);
     liftL.move_velocity(0);
     liftR.tare_position();
     liftL.tare_position();
     liftCalibrated = true;
   }
-  if(level==0&&liftR.get_position()<50){
-      liftR.move_velocity(0);
-      liftL.move_velocity(0);
-      return;
-  }
 
   double encoderUnits = (lowPost*(level==1)) + (highPost*(level==2)) + (max*(level==3));
 	int direction = 2*(encoderUnits > liftR.get_position())-1;
+
   if(direction==-1){
-    liftSpeed = liftSpeed/4;
+    liftSpeed = liftSpeed/2;
   }
   liftR.move_absolute(encoderUnits, liftSpeed*direction);
   liftL.move_absolute(encoderUnits, liftSpeed*direction);
