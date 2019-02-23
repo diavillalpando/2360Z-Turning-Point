@@ -174,24 +174,35 @@ void flip(){
 | --Shoot Method--
 |   - Automated shot for the flywheel [launch the ball once the flywheel reaches the given speed]
 ------------------------------------------------------------------------------------------------*/
-
-void shoot(int rpm){
-
+void shootEncoder(int rpm){
   pros::Motor flywheel(flywheelPort);
 	pros::Motor index(indexPort, true);
-  while(flywheel.get_actual_velocity()>(rpm-20)){
-    std::string text = "FlyWheel: "+ std::to_string(flywheel.get_actual_velocity()) + " RPM";
-    contConsole(text.c_str());
+  pros::ADIEncoder encoder(2, 3); //input:B, output:C
+  int speed = 0;
+encoder.get_value();
+}
+
+void shoot(int rpm){
+  pros::Motor flywheel(flywheelPort);
+	pros::Motor index(indexPort, true);
+  flywheel.move(0);
+  int currentSpeed = flywheel.get_actual_velocity();
+  delay(5);
+
+  while(currentSpeed>50){
+    delay(5);
+    currentSpeed = flywheel.get_actual_velocity();
   }
-  flywheel.move_velocity(200);
-  while(flywheel.get_actual_velocity()<rpm){
-    std::string text = "FlyWheel: "+ std::to_string(flywheel.get_actual_velocity()) + " RPM";
-    contConsole(text.c_str());
+  flywheel.move(127);
+  delay(5);
+  while(currentSpeed<rpm){
+    delay(5);
+    currentSpeed = flywheel.get_actual_velocity();
   }
-  index.tare_position();
-  index.move_relative(300,200);
-  while(index.get_position()<225){}
-  flywheel.move_velocity(0);
+  index.move_relative(350, 200);
+  delay(600);
+  flywheel.move(0);
+  index.move(0);
 
 }
 

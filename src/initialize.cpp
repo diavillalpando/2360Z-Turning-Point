@@ -38,7 +38,7 @@ void initialize(){  //First Thing to Run
 	//pros::Task userInterface((task_fn_t)UIFunc,NULL,TASK_PRIORITY_DEFAULT+2,TASK_STACK_DEPTH_DEFAULT,"CustomUserInterface");//Starts the custom User Interface
 	//pros::Task intakeTask((task_fn_t)smartIntake,NULL,TASK_PRIORITY_DEFAULT+1,TASK_STACK_DEPTH_DEFAULT,"AutonumousIntake");//Starts the custom Intake Method
 
-	//pros::Task userInterface((task_fn_t)UIFunc);
+	pros::Task userInterface((task_fn_t)UIFunc);
 
 	//--Defines the Ports for the Various Subsystems--//
 	leftPort = 20;

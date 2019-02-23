@@ -51,7 +51,7 @@ void autonomous() {
   }
   //---------------------//
 }
-const char * autonDescription(int i){
+const char* autonDescription(int i){
 	std::string description = "No Autonumous"; //-0-//
   if(i==1){   description = "FLG - Middle & Bottom flag; Top from middle post";} //-1-//
   if(i==2){   description = "FLG - Middle post all 3 flags";} //-2-//
