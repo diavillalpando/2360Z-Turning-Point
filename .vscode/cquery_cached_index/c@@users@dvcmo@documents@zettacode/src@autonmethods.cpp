@@ -174,7 +174,7 @@ void flip(){
 | --Shoot Method--
 |   - Automated shot for the flywheel [launch the ball once the flywheel reaches the given speed]
 ------------------------------------------------------------------------------------------------*/
-double flyWheelRpm(){
+double flywheelQuad(){
   pros::ADIEncoder encoder(2, 3);
   int first = encoder.get_value();
   delay(10);
@@ -183,11 +183,40 @@ double flyWheelRpm(){
   double speed = (percentageOfRevolution/10) * 1000 * 60;//rev per milli --> rev per sec --> rev per min
   return speed;
 }
+double flyWheelRpm(){
+  pros::Motor flywheel(flywheelPort);
+  int first = flywheel.get_position();
+  delay(10);
+  int second = flywheel.get_position();
+  double percentageOfRevolution = abs(second - first) / 900;
+  double speed = (percentageOfRevolution/10) * 1000 * 60;//rev per milli --> rev per sec --> rev per min
+  return speed;
+}
 
-void shootEncoder(int rpm){
+void shootQuad(int rpm){
   pros::Motor flywheel(flywheelPort);
 	pros::Motor index(indexPort, true);
   pros::ADIEncoder encoder(2, 3); //input:B, output:C
+  double currentSpeed = flywheelQuad();
+
+  flywheel.move(0);
+  while(currentSpeed>(rpm-20)){
+    currentSpeed = flywheelQuad();
+  }
+  flywheel.move(127);
+
+  while(currentSpeed<rpm){
+    currentSpeed = flywheelQuad();
+  }
+  index.move_relative(350, 200);
+  delay(600);
+  flywheel.move(0);
+  index.move(0);
+}
+
+void shoot(int rpm){
+  pros::Motor flywheel(flywheelPort);
+	pros::Motor index(indexPort, true);
   double currentSpeed = flyWheelRpm();
 
   flywheel.move(0);
@@ -205,8 +234,7 @@ void shootEncoder(int rpm){
   index.move(0);
 }
 
-
-void shoot(int rpm){
+void shoot2(int rpm){
   pros::Motor flywheel(flywheelPort);
 	pros::Motor index(indexPort, true);
   delay(100);
