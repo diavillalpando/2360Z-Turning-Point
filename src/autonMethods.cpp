@@ -230,8 +230,7 @@ void shoot(int rpm){
 
   flywheel.move(0);
   index.move(0);
-  delay(400);
-  flywheel.set_brake_mode(E_MOTOR_BRAKE_COAST);
+
 }
 
 /*---------------------------------------------------------
