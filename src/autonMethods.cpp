@@ -210,9 +210,12 @@ void shoot(int rpm){
   pros::Motor flywheel(flywheelPort);
 	pros::Motor index(indexPort, true);
   delay(100);
-  flywheel.move(0);
+  flywheel.move_velocity(0);
+  flywheel.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
+  index.move_relative(0, 200);
+  delay(100);
   int currentSpeed = flywheel.get_actual_velocity();
-  delay(5);
+  delay(100);
 
   while(currentSpeed>50){
     delay(5);
@@ -226,8 +229,11 @@ void shoot(int rpm){
   }
   index.move_relative(350, 200);
   delay(600);
+
   flywheel.move(0);
   index.move(0);
+  delay(400);
+  flywheel.set_brake_mode(E_MOTOR_BRAKE_COAST);
 
 }
 
