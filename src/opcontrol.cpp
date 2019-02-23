@@ -16,7 +16,6 @@ void opcontrol() {
 	pros::Motor liftR(liftRPort);
 	pros::Motor claw(clawPort, true);
 
-liftR.tare_position();
 
 	//--Initializes instances of Controllers--//
 	ControllerCustom cont(1);
@@ -60,7 +59,24 @@ liftR.tare_position();
 		flywheel.move_velocity(100*partner.up);
 
 		if(partner.btnA && partner.up ){
-			shoot(shotA);
+			flywheel.move(0);
+			int currentSpeed = flywheel.get_actual_velocity();
+			delay(5);
+
+			while(currentSpeed>50){
+				delay(5);
+				currentSpeed = flywheel.get_actual_velocity();
+			}
+			flywheel.move(127);
+			delay(5);
+			while(currentSpeed<shotA){
+				delay(5);
+				currentSpeed = flywheel.get_actual_velocity();
+			}
+			index.move_relative(350, 200);
+			delay(600);
+			flywheel.move(0);
+			index.move(0);
 		}
 		if(partner.btnB && partner.up ){
 			shoot(shotB);
