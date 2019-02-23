@@ -174,47 +174,17 @@ void flip(){
 | --Shoot Method--
 |   - Automated shot for the flywheel [launch the ball once the flywheel reaches the given speed]
 ------------------------------------------------------------------------------------------------*/
-double flywheelQuad(){
-  pros::ADIEncoder encoder(2, 3);
-  int first = encoder.get_value();
-  delay(10);
-  int second = encoder.get_value();
-  double percentageOfRevolution = abs(second - first) / 360;
-  double speed = (percentageOfRevolution/10) * 1000 * 60;//rev per milli --> rev per sec --> rev per min
-  return speed;
-}
+
 double flyWheelRpm(){
-  pros::Motor flywheel(flywheelPort);
+  pros::Motor flywheel(flywheelPort);//pros::ADIEncoder encoder(2, 3);
   int first = flywheel.get_position();
-  delay(10);
+  delay(50);
   int second = flywheel.get_position();
   double percentageOfRevolution = abs(second - first) / 900;
-  double speed = (percentageOfRevolution/10) * 1000 * 60;//rev per milli --> rev per sec --> rev per min
+  double speed = (percentageOfRevolution/50) * 1000 * 60;//rev per milli --> rev per sec --> rev per min
   return speed;
 }
-
-void shootQuad(int rpm){
-  pros::Motor flywheel(flywheelPort);
-	pros::Motor index(indexPort, true);
-  pros::ADIEncoder encoder(2, 3); //input:B, output:C
-  double currentSpeed = flywheelQuad();
-
-  flywheel.move(0);
-  while(currentSpeed>(rpm-20)){
-    currentSpeed = flywheelQuad();
-  }
-  flywheel.move(127);
-
-  while(currentSpeed<rpm){
-    currentSpeed = flywheelQuad();
-  }
-  index.move_relative(350, 200);
-  delay(600);
-  flywheel.move(0);
-  index.move(0);
-}
-
-void shoot(int rpm){
+void shoot2(int rpm){
   pros::Motor flywheel(flywheelPort);
 	pros::Motor index(indexPort, true);
   double currentSpeed = flyWheelRpm();
@@ -234,7 +204,7 @@ void shoot(int rpm){
   index.move(0);
 }
 
-void shoot2(int rpm){
+void shoot(int rpm){
   pros::Motor flywheel(flywheelPort);
 	pros::Motor index(indexPort, true);
   delay(100);
@@ -262,7 +232,6 @@ void shoot2(int rpm){
   index.move(0);
   delay(400);
   flywheel.set_brake_mode(E_MOTOR_BRAKE_COAST);
-
 }
 
 /*---------------------------------------------------------
