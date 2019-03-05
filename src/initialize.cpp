@@ -4,18 +4,15 @@
 //#include "customUI.cpp"jhg
 
 int mainAuton;
-int leftPort;
-int rightPort;
-int flywheelPort;
-int indexPort;
-int intakePort;
-int liftLPort;
-int liftRPort;
-int clawPort;
+extern int leftPort;
+extern int leftPort2;
+extern int rightPort;
+extern int rightPort2;
+extern int puncherPort;
+extern int intakePort;
+extern int anglePort;
+extern int armPort;
 int visionPort;
-int intakeSensor;
-int indexSensor;
-int liftSensor;
 int shotA;
 int shotA2; //this is just a test to see what happens
 int shotB;
@@ -42,20 +39,18 @@ void initialize(){  //First Thing to Run
 
 	//--Defines the Ports for the Various Subsystems--//
 	leftPort = 20;
-	rightPort = 19;
-	flywheelPort = 11;
-	indexPort = 12;
-	intakePort = 13;
-	liftLPort = 15;
-	liftRPort = 16;
-	clawPort = 14;
+	leftPort2 = 19;
+	rightPort = 18;
+	rightPort2 = 17;
+	puncherPort = 16;
+	intakePort = 15;
+	anglePort = 14;
+	armPort = 13;
+
 	visionPort = 1;
-	intakeSensor = 6;
-	indexSensor = 8;
-	liftSensor = 7;
 
 	//--definitions of the times for the various shots--// [OLD]
-	shotA = 140;
+	shotA = 145;
 	shotB = 180;
 	shotX = 200;
 

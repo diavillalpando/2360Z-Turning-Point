@@ -8,14 +8,13 @@ void opcontrol() {
 
 	//--Motor Definitions--//
 	pros::Motor left_mtr(leftPort);
+	pros::Motor left_mtr2(leftPort2,true);
 	pros::Motor right_mtr(rightPort,true);
-	pros::Motor flywheel(flywheelPort);
-	pros::Motor index(indexPort, true);
-	pros::Motor intake(intakePort, true);
-	pros::Motor liftL(liftLPort, true);
-	pros::Motor liftR(liftRPort);
-	pros::Motor claw(clawPort, true);
-
+	pros::Motor right_mtr2(rightPort2);
+	pros::Motor puncher(puncherPort);
+	pros::Motor intake(intakePort);
+	pros::Motor aimer(anglePort);
+	pros::Motor arm(armPort);
 
 	//--Initializes instances of Controllers--//
 	ControllerCustom cont(1);
@@ -33,48 +32,20 @@ void opcontrol() {
 		}
 
 		//--Drive--//
-		left_mtr.move( cont.lJoy  );
 		right_mtr.move( cont.rJoy );
+		right_mtr2.move( cont.rJoy );
 
-		//--CLaw--//
-		if(cont.r1){flip(45);}
-    if(cont.r2){flip(90);}
-		if(!cont.r2&&!cont.r1){flip(-1);}
+		left_mtr.move( cont.lJoy  );
+		left_mtr2.move( cont.lJoy  );
 
-		//--Lift--//
-		if(cont.l1){
-			liftR.move_velocity(200);
-			liftL.move_velocity(200);
-		}
-		if(cont.l2){
-			liftR.move_velocity( -100);
-			liftL.move_velocity( -100);
-		}
-		if(!cont.l2&&!cont.l1){
-			liftR.move_velocity(0);
-			liftL.move_velocity(0);
-		}
+		//--Arm--//
+		arm.move_velocity((cont.l1-cont.l2)*200);
 
-		//--Flywheel--//
-		if(partner.up){
-			flywheel.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
-		}else{
-			flywheel.set_brake_mode(E_MOTOR_BRAKE_COAST);
-		}
+		//--Puncher--//
+		puncher.move_velocity(200*cont.r2);
 
-		if(partner.btnA && partner.up ){
-			shoot(shotA);
-		}
-		if(partner.btnB && partner.up ){
-			shoot(shotB);
-		}
-		if(partner.btnX && partner.up ){
-			shoot(shotX);
-		}
-
-    //--Intake/Indexer--//
-		int reverseButt = -2*(partner.down)+1;
-		index.move_velocity(80*partner.btnY*reverseButt*(!pros::c::adi_digital_read(indexSensor)));
+    //--Intake--//
+		int reverseButt = -2*(cont.right)+1;
 		intake.move_velocity(200*partner.btnY*reverseButt);
 
 		//--Vision Sensor Testing--//

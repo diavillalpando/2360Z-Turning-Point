@@ -1,20 +1,17 @@
+extern int mainAuton;
 
 //Ports for the Brain
-extern int mainAuton;
 extern int leftPort;
+extern int leftPort2;
 extern int rightPort;
-extern int flywheelPort;
-extern int indexPort;
+extern int rightPort2;
+extern int puncherPort;
 extern int intakePort;
-extern int liftLPort;
-extern int liftRPort;
-extern int clawPort;
+extern int anglePort;
+extern int armPort;
 
 //Sensors
 extern int visionPort;
-extern int intakeSensor;
-extern int indexSensor;
-extern int liftSensor;
 
 //Vision Sensor
 extern double findFlag();
