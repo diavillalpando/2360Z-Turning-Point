@@ -1,95 +1,96 @@
 #include "main.h"
 #include "MyHeaders/globalVariables.h"
 
-double findFlag(){ //Gets the x distance to the center of the camera of the object whose position is closest to the center;
-pros::Vision vision_sensor(visionPort);
-int green_objects[10][4]; //10 objects, [0] = x pos; [1] = y pos; [2] = width; [3] = height
-int enemy_objects[10][4]; //10 objects, [0] = x pos; [1] = y pos; [2] = width; [3] = height
-int flags[10]; //positions where the flags are; the value is -1 if there is no flag stored
-double distance = 0.6;
-int centerFlag = -1;
-int cameraCenter = 100;
-
-std::cout << "------------Flag Pos------------" << std::endl;
-
-//--Stores values into the arrays--//
-int currentColor = enemy_color;
-for (int i = 0; i < 2; i++){
-	for(int j = 0; j < 10; j++){
-			vision_object_s_t current = vision_sensor.get_by_sig(j,currentColor);
-			if(currentColor==enemy_color){
-				enemy_objects[j][0] = current.x_middle_coord;
-				enemy_objects[j][1] = current.y_middle_coord;
-				enemy_objects[j][2] = current.width;
-				enemy_objects[j][3] = current.height;
-			}else{
-				green_objects[j][0] = current.x_middle_coord;
-				green_objects[j][1] = current.y_middle_coord;
-				green_objects[j][2] = current.width;
-				green_objects[j][3] = current.height;
-			}
-	}
-	currentColor = vision_green;
-}
-//--Gets locations for the flags--//
-for(int i = 0; i<10; i++){
-	double radiusX = green_objects[i][2]*distance;
-	double radiusY = green_objects[i][3]*distance;
-	flags[i] = -1;
-	for(int j = 0; j<10; j++){
-		bool heightDiff = abs(green_objects[i][1]-enemy_objects[j][1])<=radiusY;
-		bool widthDiffR =abs((green_objects[i][0]+green_objects[i][2]/2)-(enemy_objects[j][0]-enemy_objects[j][2]/2)) <= radiusX;
-		bool widthDiffL =abs((green_objects[i][0]-green_objects[i][2]/2)-(enemy_objects[j][0]+enemy_objects[j][2]/2)) <= radiusX;
-		if(heightDiff&&(widthDiffR||widthDiffL)){
-			flags[i] = enemy_objects[j][0];
-			j = 10;
-		}
-	}
-}
-std::cout << flags[0] << std::endl;
-std::cout << flags[1] << std::endl;
-std::cout << flags[2] << std::endl;
-std::cout << flags[3] << std::endl;
-std::cout << flags[4] << std::endl;
-std::cout << flags[5] << std::endl;
-std::cout << flags[6] << std::endl;
-std::cout << flags[7] << std::endl;
-std::cout << flags[8] << std::endl;
-std::cout << flags[9] << std::endl;
-//--Finds the closest flag to the center--//
-for(int i = 0; i<10; i++){
-	if( abs(flags[i]-cameraCenter) < abs(centerFlag-cameraCenter) ){
-		centerFlag = flags[i];
-	}
-}
-
-std::cout << "-------------Finish-------------" << std::endl;
-return centerFlag;
-}
-//------------------------------------------------------------------------------------------------------------------------------------------------
-//ANDY'S CODE [FEB 16]//
-double findFlag2(){ //Gets the x distance to the center of the camera of the object whose position is closest to the center;
-	pros::Vision vision_sens(visionPort);
-	int team_xpos[10];
-	int nearest_dist = 158;
-	for (int i = 0; i < 10; i++){
-		vision_object_s_t ooflol = vision_sens.get_by_sig(i,enemy_color);
-		if ((abs(ooflol.x_middle_coord) < 316) && (abs(ooflol.x_middle_coord) > 0))
-		{
-				team_xpos[i] = ooflol.x_middle_coord;
-		}
-		else
-		{
-				team_xpos[i] = -1;
-		}
-	}
-	for(int i = 0; i < 10; i++)
+double findFlag(){ //Gets the coordinates of the nearest enemy
+	pros::Vision vision_sensor (visionPort);
+	int vision_xmiddle = 158;
+	int vision_ymiddle = 106;
+	int obj_count = vision_sensor.get_object_count();
+	//Green Array
+	int green_arr[10][3]; // 0:x-middle-coord  1:y-middle-coord  2:width  3:height
+	for (int i = 0; i < 10; i++) //Declare object lists and set all values within to -1
 	{
-		if ((nearest_dist > abs(team_xpos[i]-158)) && (team_xpos[i] != -1))
+			for (int j = 0; j < 3; j++)
+			{green_arr[i][j] = -1;}
+	}
+	//Enemy Array
+	int enemy_arr[10][2]; // 0:x-middle-coord  1:y-middle-coord
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{enemy_arr[i][j] = -1;}
+	}
+	//Flag Array
+	int flag_arr[10][2];
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{flag_arr[i][j] = -1;}
+	}
+	int greenCount = 0; // # of Green objects
+	int enemyCount = 0; // # of Enemy objects
+	int flagCount = 0;
+	int xdist = -1;
+	int ydist = -1;
+	{
+  	vision_object_s_t object_arr[obj_count];
+    vision_sensor.read_by_sig(0, vision_green, obj_count, object_arr);
+		for (int i = 0; i < obj_count; i++)
 		{
-				nearest_dist = (abs(team_xpos[i]-158));
+			if ((object_arr[i].signature == vision_green) && (greenCount < 10))
+			{
+				if (object_arr[i].width > 1)
+				{green_arr[greenCount][0] = object_arr[i].left_coord + (object_arr[i].width/2);}
+				else
+				{green_arr[greenCount][0] = object_arr[i].left_coord;}
+
+				if (object_arr[i].height > 1)
+				{green_arr[greenCount][1] = object_arr[i].top_coord + (object_arr[i].height/2);}
+				else
+				{green_arr[greenCount][1] = object_arr[i].top_coord;}
+
+				green_arr[greenCount][2] = ((object_arr[i].width) * (object_arr[i].height));
+				greenCount++;
+			}
+			else if ((object_arr[i].signature == enemy_color) && (enemyCount < 10))
+			{
+				if (object_arr[i].width > 1)
+				{enemy_arr[enemyCount][0] = object_arr[i].left_coord + (object_arr[i].width/2);}
+				else
+				{enemy_arr[enemyCount][0] = object_arr[i].left_coord;}
+
+				if (object_arr[i].height > 1)
+				{enemy_arr[enemyCount][1] = object_arr[i].top_coord + (object_arr[i].height/2);}
+				else
+				{enemy_arr[enemyCount][1] = object_arr[i].top_coord;}
+				enemyCount++;
+			}
 		}
 	}
-	std::cout << nearest_dist << std::endl;
-	return 0;
+
+	if (greenCount > 0)
+	{
+		for(int i = 0; i < greenCount; i++)
+		{
+			for (int j = 0; j < enemyCount; j++)
+			{
+				xdist = abs(green_arr[i][0]-enemy_arr[j][0]);
+				ydist = abs(green_arr[i][1]-enemy_arr[j][1]);
+				if ( sqrt((xdist^2) + (ydist^2))  <  (0.1*green_arr[i][2]) )
+				{
+					flag_arr[flagCount][0] = green_arr[i][0];
+					flag_arr[flagCount][1] = green_arr[i][1];
+					flagCount++;
+					break;
+				}
+			}
+		}
+	}
+
+	std::cout << "Objects Detected: " << obj_count << std::endl;
+	for (int i = 0; i < 10; i++)
+	{std::cout << flag_arr[i][0] << ", " << flag_arr[i][1] << std::endl;}
+	std::cout << "Done. Flags Detected: " << flagCount << std::endl;
+	pros::delay(10);
+	return(0);
 }

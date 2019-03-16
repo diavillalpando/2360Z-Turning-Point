@@ -4,14 +4,14 @@
 //#include "customUI.cpp"jhg
 
 int mainAuton;
-extern int leftPort;
-extern int leftPort2;
-extern int rightPort;
-extern int rightPort2;
-extern int puncherPort;
-extern int intakePort;
-extern int anglePort;
-extern int armPort;
+int leftPort;
+int leftPort2;
+int rightPort;
+int rightPort2;
+int puncherPort;
+int intakePort;
+int anglePort;
+int armPort;
 int visionPort;
 int shotA;
 int shotA2; //this is just a test to see what happens
@@ -38,16 +38,16 @@ void initialize(){  //First Thing to Run
 	pros::Task userInterface((task_fn_t)UIFunc);
 
 	//--Defines the Ports for the Various Subsystems--//
-	leftPort = 20;
-	leftPort2 = 19;
-	rightPort = 18;
-	rightPort2 = 17;
-	puncherPort = 16;
-	intakePort = 15;
-	anglePort = 14;
+	leftPort = 5;
+	leftPort2 = 2;
+	rightPort = 3;
+	rightPort2 = 4;
+	puncherPort = 1;
+	intakePort = 6;
+	anglePort = 11;
 	armPort = 13;
 
-	visionPort = 1;
+	visionPort = 20;
 
 	//--definitions of the times for the various shots--// [OLD]
 	shotA = 145;

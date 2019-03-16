@@ -8,11 +8,11 @@ void opcontrol() {
 
 	//--Motor Definitions--//
 	pros::Motor left_mtr(leftPort);
-	pros::Motor left_mtr2(leftPort2,true);
+	pros::Motor left_mtr2(leftPort2);
 	pros::Motor right_mtr(rightPort,true);
-	pros::Motor right_mtr2(rightPort2);
+	pros::Motor right_mtr2(rightPort2,true);
 	pros::Motor puncher(puncherPort);
-	pros::Motor intake(intakePort);
+	pros::Motor intake(intakePort,true);
 	pros::Motor aimer(anglePort);
 	pros::Motor arm(armPort);
 
@@ -38,15 +38,25 @@ void opcontrol() {
 		left_mtr.move( cont.lJoy  );
 		left_mtr2.move( cont.lJoy  );
 
-		//--Arm--//
-		arm.move_velocity((cont.l1-cont.l2)*200);
+		//--Aimer--//
+		aimer.move_velocity((cont.up-cont.down)*200);
+		if(cont.btnA==1){aimTick(shotA, false);}
+		if(cont.btnB==1){aimTick(shotB, false);}
+		if(cont.btnX==1){aimTick(shotX, false);}
+
+		std::string text = "Aimer: "+ std::to_string(aimer.get_position()) + " Ticks";
+		contConsole(text.c_str());
 
 		//--Puncher--//
 		puncher.move_velocity(200*cont.r2);
 
     //--Intake--//
-		int reverseButt = -2*(cont.right)+1;
-		intake.move_velocity(200*partner.btnY*reverseButt);
+		intake.move_velocity(200*(partner.l1-partner.l2));
+
+		//--Arm--//
+		arm.move_velocity(200*(cont.l1-cont.l2));
+		if(cont.r1){arm.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+		}else{arm.set_brake_mode(E_MOTOR_BRAKE_COAST);}
 
 		//--Vision Sensor Testing--//
     //double whereAreThou = findFlag();
@@ -60,5 +70,8 @@ void opcontrol() {
 /*
 HOW TO CONSOLE
 std::string text = "FlyWheel: "+ std::to_string(flywheel.get_actual_velocity()) + " RPM";
-contConsole(text.c_str()); indexButton = pros::c::adi_digital_read(indexSensor);
+contConsole(text.c_str());
+
+
+indexButton = pros::c::adi_digital_read(indexSensor);
 */
