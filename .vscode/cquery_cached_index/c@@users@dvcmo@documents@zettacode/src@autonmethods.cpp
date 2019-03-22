@@ -142,6 +142,21 @@ void aim(int angle, bool wait){
 | --aimTick Method--
 |   - moves the motor a certain amount of ticks
 ------------------------------------------------------------------*/
+void aimTick2(int ticks, bool wait){
+  pros::Motor aimer(anglePort);
+
+    int speed = 200;
+    int difference = abs(aimer.get_position()-ticks);
+
+    aimer.move_velocity(speed* (2*(ticks>aimer.get_position())-1) );
+
+
+}
+
+/*------------------------------------------------------------------
+| --aimTick Method--
+|   - moves the motor a certain amount of ticks
+------------------------------------------------------------------*/
 void aimTick(int ticks, bool wait){
   pros::Motor aimer(anglePort);
 

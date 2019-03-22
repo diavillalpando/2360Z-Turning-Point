@@ -38,25 +38,25 @@ void initialize(){  //First Thing to Run
 	pros::Task userInterface((task_fn_t)UIFunc);
 
 	//--Defines the Ports for the Various Subsystems--//
-	leftPort = 5;
-	leftPort2 = 2;
-	rightPort = 3;
-	rightPort2 = 4;
+	leftPort = 10;
+	leftPort2 = 9;
+	rightPort = 20;
+	rightPort2 = 12;
 	puncherPort = 1;
-	intakePort = 6;
+	intakePort = 3;
 	anglePort = 11;
-	armPort = 13;
+	armPort = 2;
 
-	visionPort = 20;
+	visionPort = 16;
 
 	//--definitions of the times for the various shots--// [OLD]
-	shotA = 145;
-	shotB = 180;
-	shotX = 200;
+	shotA = 256;
+	shotB = 523;
+	shotX = 127;
 
-	shotA2 = 100;
-	shotB2 = 150;
-	shotX2 = 200;
+	shotA2 = 772;
+	shotB2 = 849;
+	shotX2 = 640;
 
 	//--Defines what vision sensor signatures correspond to what color--//
 	vision_blue = 1;

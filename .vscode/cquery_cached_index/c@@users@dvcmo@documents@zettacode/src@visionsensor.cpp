@@ -3,8 +3,18 @@
 
 double findFlag(){ //Gets the coordinates of the nearest enemy
 	pros::Vision vision_sensor (visionPort);
+	pros::Controller master(pros::E_CONTROLLER_MASTER);
+	pros::Motor left_mtr(leftPort);
+	pros::Motor left_mtr2(leftPort2);
+	pros::Motor right_mtr(rightPort,true);
+	pros::Motor right_mtr2(rightPort2,true);
+
 	int vision_xmiddle = 158;
 	int vision_ymiddle = 106;
+	int smallestDistance = 316;
+	int nearestDist = -1;
+	int closestFlag = -1;
+	int turnDir = 0;
 	int obj_count = vision_sensor.get_object_count();
 	//Green Array
 	int green_arr[10][3]; // 0:x-middle-coord  1:y-middle-coord  2:width  3:height
@@ -76,7 +86,7 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 			{
 				xdist = abs(green_arr[i][0]-enemy_arr[j][0]);
 				ydist = abs(green_arr[i][1]-enemy_arr[j][1]);
-				if ( sqrt((xdist^2) + (ydist^2))  <  (0.1*green_arr[i][2]) )
+				if ( sqrt((xdist^2) + (ydist^2))  <  (0.5*green_arr[i][2]) )
 				{
 					flag_arr[flagCount][0] = green_arr[i][0];
 					flag_arr[flagCount][1] = green_arr[i][1];
@@ -87,10 +97,42 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 		}
 	}
 
-	std::cout << "Objects Detected: " << obj_count << std::endl;
-	for (int i = 0; i < 10; i++)
-	{std::cout << flag_arr[i][0] << ", " << flag_arr[i][1] << std::endl;}
-	std::cout << "Done. Flags Detected: " << flagCount << std::endl;
-	pros::delay(10);
+	if (flagCount > 0)
+	{
+		for(int i = 0; i < flagCount; i++)
+		{
+			if (abs(vision_xmiddle - flag_arr[flagCount][0]) < abs(smallestDistance))
+			{
+				smallestDistance = (vision_xmiddle - flag_arr[flagCount][0]);
+				closestFlag = i;
+			}
+		}
+		nearestDist = (vision_xmiddle - flag_arr[closestFlag][0]);
+		if (nearestDist > 0)
+		{turnDir = 1;}
+		else
+		{turnDir = -1;}
+	}
+	else
+	{
+		nearestDist = -1;
+	}
+
+
+	//std::cout << "Objects Detected: " << obj_count << std::endl;
+	//for (int i = 0; i < 10; i++)
+	//{std::cout << flag_arr[i][0] << ", " << flag_arr[i][1] << std::endl;}
+	std::cout << "Nearest X: " << flag_arr[closestFlag][0] << std::endl;
+	std::cout << "Nearest Dist: " << nearestDist  << std::endl;
+
+
+
+	if ((master.get_digital(DIGITAL_A)) && (abs(nearestDist) > 6))
+	{
+		right_mtr.move(turnDir * 40 );
+		right_mtr2.move(turnDir * 40  );
+		left_mtr.move( -turnDir * 40  );
+		left_mtr2.move( -turnDir * 40 );
+	}
 	return(0);
 }
