@@ -49,7 +49,7 @@ void initialize(){  //First Thing to Run
 
 	visionPort = 16;
 
-	//--definitions of the times for the various shots--// [OLD]
+	//--definitions of the ticks for the various shots--// 
 	shotA = 256;
 	shotB = 523;
 	shotX = 127;
