@@ -49,7 +49,7 @@ void initialize(){  //First Thing to Run
 
 	visionPort = 16;
 
-	//--definitions of the ticks for the various shots--// 
+	//--definitions of the ticks for the various shots--//
 	shotA = 256;
 	shotB = 513;
 	shotX = 92;
@@ -62,7 +62,7 @@ void initialize(){  //First Thing to Run
 	vision_blue = 1;
 	vision_red = 2;
 	vision_green = 3;
-	enemy_color = vision_blue; //By Default the robot is part of the Blue alliance
+	enemy_color = vision_red; //By Default the robot is part of the Blue alliance
 
 	redTeam = true;
 }

@@ -23,7 +23,157 @@ void drive(int inches, int speed){
 
   int direction = 2*(inches>0)-1;
   double rotations = inches/(wheelDiameter*pi);
-  double ma = 1.5;
+  double ma = 1;
+  double encoderUnits = rotations*900*ma;
+  int preventStall = encoderUnits/8;
+
+  left_mtr.tare_position();
+  left_mtr2.tare_position();
+  right_mtr.tare_position();
+  right_mtr2.tare_position();
+
+  left_mtr.move_absolute(encoderUnits, speed);
+  left_mtr2.move_absolute(encoderUnits, speed);
+  right_mtr.move_absolute(encoderUnits, speed);
+  right_mtr2.move_absolute(encoderUnits, speed);
+
+  if(direction>0){
+    while(left_mtr.get_position()<encoderUnits||right_mtr.get_position()<encoderUnits){
+        int leftSpeed = (direction*speed*(cos( (pi/2) * (left_mtr.get_position()/(encoderUnits+preventStall) ) ) ) );
+        int rightSpeed = (direction*speed*(cos( (pi/2) * (right_mtr.get_position()/(encoderUnits+preventStall) ) ) ) );
+        left_mtr.modify_profiled_velocity(leftSpeed);
+        left_mtr2.modify_profiled_velocity(leftSpeed);
+        right_mtr.modify_profiled_velocity(rightSpeed);
+        right_mtr2.modify_profiled_velocity(rightSpeed);
+
+      delay(5);
+    }
+  }else{
+    while(left_mtr.get_position()>encoderUnits||right_mtr.get_position()>encoderUnits){
+      int leftSpeed = (direction*speed*(cos( (pi/2) * (left_mtr.get_position()/(encoderUnits+preventStall) ) ) ) );
+      int rightSpeed = (direction*speed*(cos( (pi/2) * (right_mtr.get_position()/(encoderUnits+preventStall) ) ) ) );
+      left_mtr.modify_profiled_velocity(leftSpeed);
+      left_mtr2.modify_profiled_velocity(leftSpeed);
+      right_mtr.modify_profiled_velocity(rightSpeed);
+      right_mtr2.modify_profiled_velocity(rightSpeed);
+      delay(5);
+    }
+  }
+  left_mtr.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  left_mtr2.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  left_mtr.move_velocity(0);
+  left_mtr2.move_velocity(0);
+  right_mtr.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  right_mtr2.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  right_mtr.move_velocity(0);
+  right_mtr2.move_velocity(0);
+  delay(550);
+}
+/*------------------------------------------------------------------------------------------------
+| --Drive Method--
+|   - Moves the robot a certain amount of inches[if Inches is negative it will drive backwards]
+------------------------------------------------------------------------------------------------*/
+void drive2(int inches, int speed){
+  pros::Motor left_mtr(leftPort);
+  pros::Motor left_mtr2(leftPort2);
+  pros::Motor right_mtr(rightPort,true);
+  pros::Motor right_mtr2(rightPort2,true);
+
+  left_mtr.move_velocity(0);
+  left_mtr2.move_velocity(0);
+  right_mtr.move_velocity(0);
+  right_mtr2.move_velocity(0);
+
+  int direction = 2*(inches>0)-1;
+  double rotations = inches/(wheelDiameter*pi);
+  double ma = 1;
+  double encoderUnits = rotations*900*ma;
+  int preventStall = encoderUnits/4;
+
+  left_mtr.tare_position();
+  left_mtr2.tare_position();
+  right_mtr.tare_position();
+  right_mtr2.tare_position();
+
+
+
+  if(direction>0){
+    while(left_mtr.get_position()<encoderUnits||right_mtr.get_position()<encoderUnits){
+      if(left_mtr.get_position()<=encoderUnits){
+        left_mtr.move_velocity(direction*speed*(cos( (pi/2) * (left_mtr.get_position()/(encoderUnits+preventStall) ) ) ) );
+        left_mtr2.move_velocity(left_mtr.get_target_velocity());
+      }else{
+        left_mtr.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+        left_mtr2.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+        left_mtr.move_velocity(0);
+        left_mtr2.move_velocity(0);
+      }
+
+      if(right_mtr.get_position()<=encoderUnits){
+        right_mtr.move_velocity(direction*speed*(cos( (pi/2) * (right_mtr.get_position()/(encoderUnits+preventStall) ) ) ) );
+        right_mtr2.move_velocity(right_mtr.get_target_velocity());
+      }else{
+        right_mtr.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+        right_mtr2.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+        right_mtr.move_velocity(0);
+        right_mtr2.move_velocity(0);
+      }
+      delay(5);
+    }
+  }else{
+    while(left_mtr.get_position()>encoderUnits||right_mtr.get_position()>encoderUnits){
+      if(left_mtr.get_position()>=encoderUnits){
+        left_mtr.move_velocity(direction*speed*(cos( (pi/2) * (left_mtr.get_position()/(encoderUnits+preventStall) ) ) ) );
+        left_mtr2.move_velocity(left_mtr.get_target_velocity());
+      }else{
+        left_mtr.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+        left_mtr2.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+        left_mtr.move_velocity(0);
+        left_mtr2.move_velocity(0);
+      }
+
+      if(right_mtr.get_position()>=encoderUnits){
+        right_mtr.move_velocity(direction*speed*(cos( (pi/2) * (right_mtr.get_position()/(encoderUnits+preventStall) ) ) ) );
+        right_mtr2.move_velocity(right_mtr.get_target_velocity());
+      }else{
+        right_mtr.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+        right_mtr2.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+        right_mtr.move_velocity(0);
+        right_mtr2.move_velocity(0);
+      }
+      delay(5);
+    }
+  }
+  left_mtr.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  left_mtr2.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  left_mtr.move_velocity(0);
+  left_mtr2.move_velocity(0);
+  right_mtr.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  right_mtr2.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+  right_mtr.move_velocity(0);
+  right_mtr2.move_velocity(0);
+  delay(550);
+}
+
+
+/*------------------------------------------------------------------------------------------------
+| --Drive Method--
+|   - Moves the robot a certain amount of inches[if Inches is negative it will drive backwards]
+------------------------------------------------------------------------------------------------*/
+void drive3(int inches, int speed){
+  pros::Motor left_mtr(leftPort);
+  pros::Motor left_mtr2(leftPort2);
+  pros::Motor right_mtr(rightPort,true);
+  pros::Motor right_mtr2(rightPort2,true);
+
+  left_mtr.move_velocity(0);
+  left_mtr2.move_velocity(0);
+  right_mtr.move_velocity(0);
+  right_mtr2.move_velocity(0);
+
+  int direction = 2*(inches>0)-1;
+  double rotations = inches/(wheelDiameter*pi);
+  double ma = 1;
   double encoderUnits = rotations*900*ma;
 
   left_mtr.tare_position();
@@ -31,33 +181,24 @@ void drive(int inches, int speed){
   right_mtr.tare_position();
   right_mtr2.tare_position();
 
-  left_mtr.move_absolute(encoderUnits*direction,speed*direction);
-  left_mtr2.move_absolute(encoderUnits*direction,speed*direction);
-  right_mtr.move_absolute(encoderUnits*direction,speed*direction);
-  right_mtr2.move_absolute(encoderUnits*direction,speed*direction);
+  left_mtr.move_absolute(encoderUnits,speed*direction);
+  right_mtr.move_absolute(encoderUnits,speed*direction);
+  left_mtr2.move_absolute(encoderUnits,speed*direction);
+  right_mtr2.move_absolute(encoderUnits,speed*direction);
   if(direction>0){
     while(left_mtr.get_position()<encoderUnits||right_mtr.get_position()<encoderUnits){
-      if(left_mtr.get_position()>encoderUnits){
-        left_mtr2.move_velocity(0);
-      }
-      if(right_mtr.get_position()>encoderUnits){
-        right_mtr2.move_velocity(0);
-      }
       delay(5);
     }
   }else{
     while(left_mtr.get_position()>encoderUnits||right_mtr.get_position()>encoderUnits){
-      if(left_mtr.get_position()<encoderUnits){
-        left_mtr2.move_velocity(0);
-      }
-      if(right_mtr.get_position()<encoderUnits){
-        right_mtr2.move_velocity(0);
-      }
       delay(5);
     }
   }
+  right_mtr2.move_velocity(0);
+  left_mtr2.move_velocity(0);
   delay(550);
 }
+
 
 /*-------------------------------------------------------------------------------------------------------------
 | --Turn Method--
@@ -72,7 +213,7 @@ void turn(int degrees,int speed){
 
 	double wheelApart = 14.5;//Inches between the 2 traction wheels
   double rotationPointBack = 1.5; //how far back is the center of rotation
-  double ma = 1.5;
+  double ma = 1;
 
   int direction = 2*(degrees>0)-1; // Gets the directionallity of degrees: clockwise being positive
   if(degrees < 0){degrees = degrees*-1;} //Gets the absolute of degrees
@@ -142,21 +283,6 @@ void aim(int angle, bool wait){
 | --aimTick Method--
 |   - moves the motor a certain amount of ticks
 ------------------------------------------------------------------*/
-void aimTick2(int ticks, bool wait){
-  pros::Motor aimer(anglePort);
-
-    int speed = 200;
-    int difference = abs(aimer.get_position()-ticks);
-
-    aimer.move_velocity(speed* (2*(ticks>aimer.get_position())-1) );
-
-
-}
-
-/*------------------------------------------------------------------
-| --aimTick Method--
-|   - moves the motor a certain amount of ticks
-------------------------------------------------------------------*/
 void aimTick(int ticks, bool wait){
   pros::Motor aimer(anglePort);
 
@@ -190,7 +316,7 @@ void aimTick(int ticks, bool wait){
 ------------------------------------------------------------------*/
 void shoot(){
   pros::Motor puncher(puncherPort);
-
+  puncher.tare_position();
   puncher.move_relative(900,200);
   puncher.set_brake_mode(MOTOR_BRAKE_COAST);
 }

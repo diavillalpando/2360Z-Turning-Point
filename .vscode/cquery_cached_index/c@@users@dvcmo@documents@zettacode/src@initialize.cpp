@@ -49,20 +49,20 @@ void initialize(){  //First Thing to Run
 
 	visionPort = 16;
 
-	//--definitions of the times for the various shots--// [OLD]
+	//--definitions of the ticks for the various shots--//
 	shotA = 256;
-	shotB = 523;
-	shotX = 127;
+	shotB = 513;
+	shotX = 92;
 
 	shotA2 = 772;
-	shotB2 = 849;
-	shotX2 = 640;
+	shotB2 = 839;
+	shotX2 = 698;
 
 	//--Defines what vision sensor signatures correspond to what color--//
 	vision_blue = 1;
 	vision_red = 2;
 	vision_green = 3;
-	enemy_color = vision_blue; //By Default the robot is part of the Blue alliance
+	enemy_color = vision_red; //By Default the robot is part of the Blue alliance
 
 	redTeam = true;
 }

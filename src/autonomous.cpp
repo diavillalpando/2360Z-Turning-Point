@@ -33,10 +33,8 @@ void autonomous() {
   int red = 2*redTeam-1; //use this variable and multiply it with your turn degrees
   //---------------------//
   if(mainAuton==0){//If No autonomous is selected
-    drive(12, 200);
-    turn(90, 100);
-    turn(-90, 100);
-    drive(-12,200);
+    drive(48, 200);
+    drive(-48,200);
   }
   //---------------------//
 }

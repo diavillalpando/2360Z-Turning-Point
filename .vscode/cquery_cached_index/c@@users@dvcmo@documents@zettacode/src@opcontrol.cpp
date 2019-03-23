@@ -22,10 +22,13 @@ void opcontrol() {
 
 	bool lowCapMode = false;
 	int armMode = 1; //0 = disable and put away, 1 = carry/prevent puncher from hitting; 2 = lowCaps
+	bool r2Pressed = false;
+	bool firstShot = true;
 
 	arm.tare_position();
 	aimer.tare_position();
 	aimer.set_brake_mode(E_MOTOR_BRAKE_HOLD);
+	aimTick(shotA, false);
 
   while(true){
 
@@ -34,7 +37,7 @@ void opcontrol() {
 		partner.update();
 
     //--Auton Testing--//
-		if(cont.up&&cont.right&&cont.down&&cont.left){
+		if(!cont.up&&cont.right&&!cont.down&&cont.left){
 			autonomous();
 		}
 
@@ -46,35 +49,43 @@ void opcontrol() {
 		left_mtr2.move( cont.lJoy  );
 
 		//--Aimer--//
-		/*
-		if(partner.btnA==1&&partner.up){aimTick(shotA, false);}
-		if(partner.btnB==1&&partner.up){aimTick(shotB, false);}
-		if(partner.btnX==1&&partner.up){aimTick(shotX, false);}
+		if(partner.btnA==1&&partner.up){aimTick(shotA, false);}//if(cont.btnA==1){aimTick(shotA, false);}
+		if(partner.btnB==1&&partner.up){aimTick(shotB, false);}//if(cont.btnB==1){aimTick(shotB, false);}
+		if(partner.btnX==1&&partner.up){aimTick(shotX, false);}//if(cont.btnX==1){aimTick(shotX, false);}
 		if(partner.btnA==1&&partner.down){aimTick(shotA2, false);}
 		if(partner.btnB==1&&partner.down){aimTick(shotB2, false);}
 		if(partner.btnX==1&&partner.down){aimTick(shotX2, false);}
-*/
-		if(cont.btnA==1){aimTick(shotA, false);}
-		if(cont.btnB==1){aimTick(shotB, false);}
-		if(cont.btnX==1){aimTick(shotX, false);}
-    std::cout << aimer.get_position()<< std::endl;
+
+
+
+    //std::cout << aimer.get_position()<< std::endl;
 		//std::string text = "Aimer: "+ std::to_string(aimer.get_position()) + " Ticks";
 		//contConsole(text.c_str());
 
 		//--Puncher--//
-		puncher.move_velocity(200*cont.r2);
+		puncher.set_brake_mode(MOTOR_BRAKE_COAST); //puncher.move_velocity(200*cont.r2);
+		if(!cont.r2&&r2Pressed){
+			r2Pressed = false;
+			firstShot = false;
+		}
+		if(cont.r2&&!r2Pressed&&((puncher.get_position()>=900)||firstShot)){
+			shoot();
+			r2Pressed = true;
+		}
+
+
 
     //--Intake--//
-		intake.move_velocity(200*(cont.r1));
-		//intake.move_velocity(200*(partner.l1-partner.l2));
+		intake.move_velocity(200*(partner.l1-partner.l2));//intake.move_velocity(200*(cont.r1));
 
 		//--Arm--//
 		if(armMode == 0){ //Disable
-
-		  arm.move_absolute(10,200);
-			arm.set_brake_mode(E_MOTOR_BRAKE_COAST);
-			if(arm.get_position()<20){
-				arm.move(0);
+			if(arm.get_position()>((30/360.0)*(64/12.0)*900)){
+				arm.move_absolute(10,200);
+			}
+			if(arm.get_position()<((30/360.0)*(64/12.0)*900)){
+				arm.move_velocity(0);
+				arm.set_brake_mode(E_MOTOR_BRAKE_COAST);
 			}
 		}
 		if(armMode == 1){ //Post Mode
@@ -95,7 +106,13 @@ void opcontrol() {
 		    arm.move_absolute(((225/360.0)*(64/12.0)*900),200);
 		  }
 		  if(!cont.l2){
-		    arm.move_absolute(((270/360.0)*(64/12.0)*900),200);
+				if(arm.get_position()<((250/360.0)*(64/12.0)*900)){
+					arm.move_absolute(((270/360.0)*(64/12.0)*900),200);
+				}
+				if(arm.get_position()>((250/360.0)*(64/12.0)*900)){
+					arm.move_velocity(0);
+					arm.set_brake_mode(E_MOTOR_BRAKE_COAST);
+				}
 		  }
 		}
 		if(cont.left){armMode = 0;}
@@ -103,7 +120,7 @@ void opcontrol() {
 		if(cont.up){armMode = 2;}
 
 		//--Vision Sensor Testing--//
-    //double whereAreThou = findFlag();
+    double whereAreThou = findFlag();
 
 		pros::delay(10);
 

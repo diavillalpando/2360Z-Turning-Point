@@ -42,7 +42,7 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 	int flagCount = 0;
 	int xdist = -1;
 	int ydist = -1;
-	{
+	
   	vision_object_s_t object_arr[obj_count];
     vision_sensor.read_by_sig(0, vision_green, obj_count, object_arr);
 		for (int i = 0; i < obj_count; i++)
@@ -76,7 +76,7 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 				enemyCount++;
 			}
 		}
-	}
+
 
 	if (greenCount > 0)
 	{
