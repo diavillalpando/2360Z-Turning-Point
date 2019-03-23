@@ -150,7 +150,7 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 		left_mtr.move_velocity(0);
 		left_mtr2.move_velocity(0);
 	}
-	if (abs(nearestDistY) > 10)
+	/*if (abs(nearestDistY) > 10)
 	{
 			aimer.move_velocity(-100 * tiltDir);
 	}
@@ -158,6 +158,6 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 	{
 		aimer.move_velocity(0);
 	}
-
+*/
 	return(0);
 }
