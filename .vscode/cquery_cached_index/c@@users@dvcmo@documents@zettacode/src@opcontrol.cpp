@@ -22,11 +22,12 @@ void opcontrol() {
 
 	bool lowCapMode = false;
 	int armMode = 1; //0 = disable and put away, 1 = carry/prevent puncher from hitting; 2 = lowCaps
-	bool r2Pressed = false;
-	bool firstShot = true;
+	bool storeMode = false;
+	bool sensorTapped = false;
 
 	arm.tare_position();
 	aimer.tare_position();
+	puncher.tare_position();
 	aimer.set_brake_mode(E_MOTOR_BRAKE_HOLD);
 	aimTick(shotA, false);
 
@@ -64,19 +65,45 @@ void opcontrol() {
 
 		//--Puncher--//
 		puncher.set_brake_mode(MOTOR_BRAKE_COAST); //puncher.move_velocity(200*cont.r2);
-		if(!cont.r2&&r2Pressed){
-			r2Pressed = false;
-			firstShot = false;
-		}
-		if(cont.r2&&!r2Pressed&&((puncher.get_position()>=900)||firstShot)){
-			shoot();
-			r2Pressed = true;
-		}
+		if(cont.r2){shoot();}
 
 
 
     //--Intake--//
-		intake.move_velocity(200*(partner.l1-partner.l2));//intake.move_velocity(200*(cont.r1));
+
+		if(cont.right){
+			storeMode = true;
+			sensorTapped = false;
+		}
+
+		if(storeMode){
+			if(cont.l1 || cont.l2){
+				storeMode = false;
+			}
+			if(!sensorTapped){
+				intake.move_velocity(-50);
+				sensorTapped = pros::c::adi_digital_read(indexSensor);
+				if(sensorTapped){
+					intake.tare_position();
+				}
+			}else{
+				intake.move_absolute(200, 200);
+				if(intake.get_position()>=200){
+					storeMode=false;
+				}
+			}
+
+		}else{
+			if(cont.l1){
+				intake.move_velocity(200);
+			}
+			if(cont.l2){
+				intake.move_velocity(-150);
+			}
+			if((!cont.l1&&!cont.l2)){
+				intake.move_velocity(0);
+			}
+		}
 
 		//--Arm--//
 		if(armMode == 0){ //Disable
@@ -87,25 +114,26 @@ void opcontrol() {
 				arm.move_velocity(0);
 				arm.set_brake_mode(E_MOTOR_BRAKE_COAST);
 			}
+
 		}
 		if(armMode == 1){ //Post Mode
-		  arm.set_brake_mode(E_MOTOR_BRAKE_HOLD);
-		  if(cont.l1){
+		  arm.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
+		  if(partner.lJoy<10&&partner.lJoy>-10){
+		    arm.move_absolute(((45/360.0)*(64/12.0)*900),100);
+		  }
+			if(partner.lJoy>10){
 		    arm.move_absolute(((165/360.0)*(64/12.0)*900),50);
 		  }
-		  if(cont.l2){
+			if(partner.lJoy<-10){
 		    arm.move_absolute( ((0/360.0)*(64/12.0)*900) ,100);
-		  }
-		  if(!cont.l1&&!cont.l2){
-		    arm.move_absolute(((45/360.0)*(64/12.0)*900),100);
 		  }
 		}
 		if(armMode == 2){ //Low Cap Mode
-		  arm.set_brake_mode(E_MOTOR_BRAKE_HOLD);
-		  if(cont.l2){
+		  arm.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
+		  if(partner.lJoy<-10){
 		    arm.move_absolute(((225/360.0)*(64/12.0)*900),200);
 		  }
-		  if(!cont.l2){
+		  if(partner.lJoy>-10){
 				if(arm.get_position()<((250/360.0)*(64/12.0)*900)){
 					arm.move_absolute(((270/360.0)*(64/12.0)*900),200);
 				}
@@ -120,8 +148,10 @@ void opcontrol() {
 		if(cont.up){armMode = 2;}
 
 		//--Vision Sensor Testing--//
-    double whereAreThou = findFlag();
-
+		if(cont.r1){
+			doubleShot();
+			//double whereAreThou = findFlag();
+		}
 		pros::delay(10);
 
 	}

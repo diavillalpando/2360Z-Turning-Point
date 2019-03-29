@@ -13,6 +13,7 @@ int intakePort;
 int anglePort;
 int armPort;
 int visionPort;
+int indexSensor;
 int shotA;
 int shotA2; //this is just a test to see what happens
 int shotB;
@@ -48,7 +49,7 @@ void initialize(){  //First Thing to Run
 	armPort = 2;
 
 	visionPort = 16;
-
+	indexSensor = 1;
 	//--definitions of the ticks for the various shots--//
 	shotA = 256;
 	shotB = 513;
@@ -59,9 +60,10 @@ void initialize(){  //First Thing to Run
 	shotX2 = 698;
 
 	//--Defines what vision sensor signatures correspond to what color--//
-	vision_blue = 1;
+	vision_green = 1;
 	vision_red = 2;
-	vision_green = 3;
+	vision_blue = 3;
+
 	enemy_color = vision_red; //By Default the robot is part of the Blue alliance
 
 	redTeam = true;

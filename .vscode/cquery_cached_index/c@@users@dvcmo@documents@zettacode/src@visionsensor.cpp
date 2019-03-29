@@ -8,13 +8,16 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 	pros::Motor left_mtr2(leftPort2);
 	pros::Motor right_mtr(rightPort,true);
 	pros::Motor right_mtr2(rightPort2,true);
+	pros::Motor aimer(anglePort);
 
 	int vision_xmiddle = 158;
 	int vision_ymiddle = 106;
-	int smallestDistance = 316;
-	int nearestDist = -1;
+	int smallestDistance = 0; //316
+	int nearestDistX = -1;
+	int nearestDistY = -1;
 	int closestFlag = -1;
 	int turnDir = 0;
+	int tiltDir = 0;
 	int obj_count = vision_sensor.get_object_count();
 	//Green Array
 	int green_arr[10][3]; // 0:x-middle-coord  1:y-middle-coord  2:width  3:height
@@ -42,7 +45,7 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 	int flagCount = 0;
 	int xdist = -1;
 	int ydist = -1;
-	
+
   	vision_object_s_t object_arr[obj_count];
     vision_sensor.read_by_sig(0, vision_green, obj_count, object_arr);
 		for (int i = 0; i < obj_count; i++)
@@ -86,53 +89,81 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 			{
 				xdist = abs(green_arr[i][0]-enemy_arr[j][0]);
 				ydist = abs(green_arr[i][1]-enemy_arr[j][1]);
-				if ( sqrt((xdist^2) + (ydist^2))  <  (0.5*green_arr[i][2]) )
+				if ( sqrt((xdist^2) + (ydist^2))  <  (0.05*green_arr[i][2]) )
 				{
-					flag_arr[flagCount][0] = green_arr[i][0];
-					flag_arr[flagCount][1] = green_arr[i][1];
+					flag_arr[flagCount][0] = (green_arr[i][0] + enemy_arr[j][0]) / 2;
+					flag_arr[flagCount][1] = (green_arr[i][1] + enemy_arr[j][1]) / 2;
 					flagCount++;
 					break;
 				}
 			}
 		}
 	}
-
 	if (flagCount > 0)
 	{
+
 		for(int i = 0; i < flagCount; i++)
 		{
-			if (abs(vision_xmiddle - flag_arr[flagCount][0]) < abs(smallestDistance))
+			if ((flag_arr[i][1]) > abs(smallestDistance))
 			{
-				smallestDistance = (vision_xmiddle - flag_arr[flagCount][0]);
+				smallestDistance = (flag_arr[i][1]);
 				closestFlag = i;
 			}
 		}
-		nearestDist = (vision_xmiddle - flag_arr[closestFlag][0]);
-		if (nearestDist > 0)
+
+		nearestDistX = (vision_xmiddle - flag_arr[closestFlag][0]);
+		nearestDistY = (vision_ymiddle - flag_arr[closestFlag][1]);
+		if (nearestDistX > 0)
 		{turnDir = 1;}
 		else
 		{turnDir = -1;}
+		if (nearestDistY > 0)
+		{tiltDir = 1;}
+		else
+		{tiltDir = -1;}
 	}
 	else
 	{
-		nearestDist = -1;
+		nearestDistX = -1;
+		nearestDistY= -1;
 	}
 
 
-	//std::cout << "Objects Detected: " << obj_count << std::endl;
-	//for (int i = 0; i < 10; i++)
-	//{std::cout << flag_arr[i][0] << ", " << flag_arr[i][1] << std::endl;}
 	std::cout << "Nearest X: " << flag_arr[closestFlag][0] << std::endl;
-	std::cout << "Nearest Dist: " << nearestDist  << std::endl;
+	std::cout << "Nearest Dist X: " << nearestDistX  << std::endl;
+	std::cout << "Nearest Dist Y: " << nearestDistY  << std::endl;
 
 
-
-	if ((master.get_digital(DIGITAL_A)) && (abs(nearestDist) > 6))
+	if (abs(nearestDistX) > 5)
 	{
-		right_mtr.move(turnDir * 40 );
-		right_mtr2.move(turnDir * 40  );
-		left_mtr.move( -turnDir * 40  );
-		left_mtr2.move( -turnDir * 40 );
+		right_mtr.move_velocity(abs(nearestDistX)* 0.4 * turnDir);
+		right_mtr2.move_velocity(abs(nearestDistX) * 0.4 * turnDir);
+		left_mtr.move_velocity(-abs(nearestDistX) * 0.4 * turnDir);
+		left_mtr2.move_velocity(-abs(nearestDistX)* 0.4 * turnDir);
+	}
+	else
+	{
+		right_mtr.move_velocity(0);
+		right_mtr2.move_velocity(0);
+		left_mtr.move_velocity(0);
+		left_mtr2.move_velocity(0);
+
+
+
+		if (abs(nearestDistY) > 13)
+		{
+				if (aimer.get_position() > 700)
+				{aimer.move_velocity(-30);}
+				else
+				 {aimer.move_velocity(-30 * tiltDir);}
+		}
+		else
+		{
+			aimer.move_velocity(0);
+		}
+
+
+
 	}
 	return(0);
 }

@@ -6,6 +6,8 @@ bool aimerCalibrated = false;
 bool armCalibrated = false;
 //-------------------------------//
 
+int aimerTarget;
+
 /*------------------------------------------------------------------------------------------------
 | --Drive Method--
 |   - Moves the robot a certain amount of inches[if Inches is negative it will drive backwards]
@@ -295,6 +297,7 @@ void aimTick(int ticks, bool wait){
   }
 
   int direction = 2*(ticks>aimer.get_position())-1;
+  aimerTarget = ticks;
 
   aimer.move_absolute(ticks, 200*direction);
   aimer.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
@@ -310,15 +313,77 @@ void aimTick(int ticks, bool wait){
   delay(600);
 }
 
+
 /*------------------------------------------------------------------
 | --shoot Method--
 |   - Fires a ball from the puncher
 ------------------------------------------------------------------*/
 void shoot(){
   pros::Motor puncher(puncherPort);
+  pros::Motor intake(intakePort,true);
+
   puncher.tare_position();
-  puncher.move_relative(900,200);
-  puncher.set_brake_mode(MOTOR_BRAKE_COAST);
+  intake.tare_position();
+
+  puncher.move_absolute(900, 200);
+  intake.move_velocity(0);
+
+  while(puncher.get_position()<900){
+    delay(5);
+  }
+  puncher.move_velocity(0);
+  puncher.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  delay(20);
+
+}
+
+/*------------------------------------------------------------------
+| --forceShoot Method--
+|   - Fires a ball from the puncher
+------------------------------------------------------------------*/
+void doubleShot(){
+  pros::Motor puncher(puncherPort);
+  pros::Motor intake(intakePort,true);
+
+  puncher.tare_position();
+  intake.tare_position();
+  int currentPosition = shotA;
+  int secondPosition = shotA2;
+
+  if(aimerTarget==shotB){
+    currentPosition = shotB;
+    secondPosition = shotB2;
+    std::cout << "Would go to shot B " << std::endl;
+  }
+  if(aimerTarget==shotX){
+    currentPosition = shotX;
+    secondPosition = shotX2;
+    std::cout << "Would go to shot X " << std::endl;
+  }
+
+  aimTick(currentPosition, false);
+  intake.move_velocity(0);
+  puncher.move_absolute(900, 200);
+  while(puncher.get_position()<900){
+    delay(10);
+    if(puncher.get_position()>800){
+      
+    }
+  }
+
+  intake.move_velocity(200);
+  aimTick(secondPosition, true);
+
+  puncher.tare_position();
+  puncher.move_absolute(900, 200);
+  while(puncher.get_position()<900){
+    delay(10);
+  }
+
+  aimTick(currentPosition, false);
+  intake.move_velocity(0);
+  puncher.move_velocity(0);
+  puncher.set_brake_mode(E_MOTOR_BRAKE_COAST);
 }
 
 /*------------------------------------------------------------------

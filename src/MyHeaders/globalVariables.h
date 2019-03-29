@@ -12,6 +12,7 @@ extern int armPort;
 
 //Sensors
 extern int visionPort;
+extern int indexSensor;
 
 //Vision Sensor
 extern double findFlag();

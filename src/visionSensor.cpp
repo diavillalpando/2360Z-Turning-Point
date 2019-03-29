@@ -12,7 +12,7 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 
 	int vision_xmiddle = 158;
 	int vision_ymiddle = 106;
-	int smallestDistance = 316;
+	int smallestDistance = 0; //316
 	int nearestDistX = -1;
 	int nearestDistY = -1;
 	int closestFlag = -1;
@@ -89,7 +89,7 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 			{
 				xdist = abs(green_arr[i][0]-enemy_arr[j][0]);
 				ydist = abs(green_arr[i][1]-enemy_arr[j][1]);
-				if ( sqrt((xdist^2) + (ydist^2))  <  (0.5*green_arr[i][2]) )
+				if ( sqrt((xdist^2) + (ydist^2))  <  (0.05*green_arr[i][2]) )
 				{
 					flag_arr[flagCount][0] = (green_arr[i][0] + enemy_arr[j][0]) / 2;
 					flag_arr[flagCount][1] = (green_arr[i][1] + enemy_arr[j][1]) / 2;
@@ -99,17 +99,18 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 			}
 		}
 	}
-
 	if (flagCount > 0)
 	{
+
 		for(int i = 0; i < flagCount; i++)
 		{
-			if (abs(vision_xmiddle - flag_arr[flagCount][0]) < abs(smallestDistance))
+			if ((flag_arr[i][1]) > abs(smallestDistance))
 			{
-				smallestDistance = (vision_xmiddle - flag_arr[flagCount][0]);
+				smallestDistance = (flag_arr[i][1]);
 				closestFlag = i;
 			}
 		}
+
 		nearestDistX = (vision_xmiddle - flag_arr[closestFlag][0]);
 		nearestDistY = (vision_ymiddle - flag_arr[closestFlag][1]);
 		if (nearestDistX > 0)
@@ -128,9 +129,6 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 	}
 
 
-	//std::cout << "Objects Detected: " << obj_count << std::endl;
-	//for (int i = 0; i < 10; i++)
-	//{std::cout << flag_arr[i][0] << ", " << flag_arr[i][1] << std::endl;}
 	std::cout << "Nearest X: " << flag_arr[closestFlag][0] << std::endl;
 	std::cout << "Nearest Dist X: " << nearestDistX  << std::endl;
 	std::cout << "Nearest Dist Y: " << nearestDistY  << std::endl;
@@ -138,10 +136,10 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 
 	if (abs(nearestDistX) > 5)
 	{
-		right_mtr.move_velocity(abs(nearestDistX)* 0.36 * turnDir);
-		right_mtr2.move_velocity(abs(nearestDistX) * 0.36 * turnDir);
-		left_mtr.move_velocity(-abs(nearestDistX) * 0.36 * turnDir);
-		left_mtr2.move_velocity(-abs(nearestDistX)* 0.36 * turnDir);
+		right_mtr.move_velocity(abs(nearestDistX)* 0.4 * turnDir);
+		right_mtr2.move_velocity(abs(nearestDistX) * 0.4 * turnDir);
+		left_mtr.move_velocity(-abs(nearestDistX) * 0.4 * turnDir);
+		left_mtr2.move_velocity(-abs(nearestDistX)* 0.4 * turnDir);
 	}
 	else
 	{
@@ -149,15 +147,23 @@ double findFlag(){ //Gets the coordinates of the nearest enemy
 		right_mtr2.move_velocity(0);
 		left_mtr.move_velocity(0);
 		left_mtr2.move_velocity(0);
+
+
+
+		if (abs(nearestDistY) > 13)
+		{
+				if (aimer.get_position() > 700)
+				{aimer.move_velocity(-30);}
+				else
+				 {aimer.move_velocity(-30 * tiltDir);}
+		}
+		else
+		{
+			aimer.move_velocity(0);
+		}
+
+
+
 	}
-	/*if (abs(nearestDistY) > 10)
-	{
-			aimer.move_velocity(-100 * tiltDir);
-	}
-	else
-	{
-		aimer.move_velocity(0);
-	}
-*/
 	return(0);
 }
