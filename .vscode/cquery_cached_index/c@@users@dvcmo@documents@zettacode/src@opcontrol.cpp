@@ -66,7 +66,7 @@ void opcontrol() {
 		//--Puncher--//
 		puncher.set_brake_mode(MOTOR_BRAKE_COAST); //puncher.move_velocity(200*cont.r2);
 		if(cont.r2){shoot();}
-
+		if(cont.r1){doubleShot();}
 
 
     //--Intake--//
@@ -148,9 +148,8 @@ void opcontrol() {
 		if(cont.up){armMode = 2;}
 
 		//--Vision Sensor Testing--//
-		if(cont.r1){
-			doubleShot();
-			//double whereAreThou = findFlag();
+		if(cont.btnA){
+			double whereAreThou = findFlag();
 		}
 		pros::delay(10);
 

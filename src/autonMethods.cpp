@@ -353,12 +353,10 @@ void doubleShot(){
   if(aimerTarget==shotB){
     currentPosition = shotB;
     secondPosition = shotB2;
-    std::cout << "Would go to shot B " << std::endl;
   }
   if(aimerTarget==shotX){
     currentPosition = shotX;
     secondPosition = shotX2;
-    std::cout << "Would go to shot X " << std::endl;
   }
 
   aimTick(currentPosition, false);
@@ -366,14 +364,57 @@ void doubleShot(){
   puncher.move_absolute(900, 200);
   while(puncher.get_position()<900){
     delay(10);
-    if(puncher.get_position()>800){
-      
-    }
   }
 
   intake.move_velocity(200);
   aimTick(secondPosition, true);
 
+  puncher.tare_position();
+  puncher.move_absolute(900, 200);
+  while(puncher.get_position()<900){
+    delay(10);
+  }
+
+  aimTick(currentPosition, false);
+  intake.move_velocity(0);
+  puncher.move_velocity(0);
+  puncher.set_brake_mode(E_MOTOR_BRAKE_COAST);
+}
+
+/*------------------------------------------------------------------
+| --forceShoot Method--
+|   - Fires a ball from the puncher
+------------------------------------------------------------------*/
+void doubleShotFast(){
+  pros::Motor puncher(puncherPort);
+  pros::Motor intake(intakePort,true);
+
+  puncher.tare_position();
+  intake.tare_position();
+  int currentPosition = shotA;
+  int secondPosition = shotA2;
+
+  if(aimerTarget==shotB){
+    currentPosition = shotB;
+    secondPosition = shotB2;
+  }
+  if(aimerTarget==shotX){
+    currentPosition = shotX;
+    secondPosition = shotX2;
+  }
+
+  aimTick(currentPosition, false);
+  intake.move_velocity(0);
+  puncher.move_absolute(900, 200);
+  while(puncher.get_position()<900){
+    delay(10);
+    if(puncher.get_position()>450){
+      intake.move_velocity(200);
+    }
+  }
+
+  aimTick(secondPosition, false);
+  //delay(500);
   puncher.tare_position();
   puncher.move_absolute(900, 200);
   while(puncher.get_position()<900){
