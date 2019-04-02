@@ -51,13 +51,13 @@ void initialize(){  //First Thing to Run
 	visionPort = 16;
 	indexSensor = 1;
 	//--definitions of the ticks for the various shots--//
-	shotA = 208;
-	shotB = 157;
-	shotX = -10;
+	shotA = 345;
+	shotB = 200;
+	shotX = 191;
 
-	shotA2 = 863;
-	shotB2 = 813;
-	shotX2 = 203;
+	shotA2 = 900;
+	shotB2 = 881;
+	shotX2 = 703;
 
 	//--Defines what vision sensor signatures correspond to what color--//
 	vision_green = 1;

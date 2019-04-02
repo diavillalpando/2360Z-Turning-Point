@@ -32,9 +32,24 @@
 void autonomous() {
   int red = 2*redTeam-1; //use this variable and multiply it with your turn degrees
   //---------------------//
+
   if(mainAuton==0){//If No autonomous is selected
-    drive(48, 200);
-    drive(-48,200);
+    armPos(1, false);
+    aimTick(shotA, true);
+    shoot();
+    armPos(0, false);
+    turn(-10,50);
+    intakeActive(1);
+    aimTick(shotA2, false);
+    drive(50,200);
+    drive(-50,200);
+    shoot();
+    turn(70,50);
+    intakeActive(1);
+    drive(45,200);
+    drive(-45,200);
+    turn(-80,50);
+    shoot();
   }
   //---------------------//
 }

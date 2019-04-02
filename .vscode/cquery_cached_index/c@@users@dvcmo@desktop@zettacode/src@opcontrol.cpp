@@ -30,7 +30,7 @@ void opcontrol() {
 	puncher.tare_position();
 	//aimer.set_brake_mode(E_MOTOR_BRAKE_HOLD);
 	aimTick(shotA, false);
-	aimer.move_velocity(0);
+	//aimer.move_velocity(0);
 
   while(true){
 
@@ -131,10 +131,13 @@ void opcontrol() {
 		}
 		if(armMode == 2){ //Low Cap Mode
 		  arm.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
-		  if(partner.lJoy<-10){
+		  if(partner.l1){
+		    arm.move_absolute(((195/360.0)*(64/12.0)*900),200);
+		  }
+			if(partner.l2){
 		    arm.move_absolute(((225/360.0)*(64/12.0)*900),200);
 		  }
-		  if(partner.lJoy>-10){
+		  if(!partner.l1&&!partner.l2){
 				if(arm.get_position()<((250/360.0)*(64/12.0)*900)){
 					arm.move_absolute(((270/360.0)*(64/12.0)*900),200);
 				}

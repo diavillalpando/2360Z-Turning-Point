@@ -240,7 +240,7 @@ void turn(int degrees,int speed){
   right_mtr2.move_absolute(-encoderUnits*direction,-speed*direction);
 
   if(direction>0){
-    while( (left_mtr.get_position()<=encoderUnits)||(right_mtr.get_position()>=-encoderUnits) ){
+    while( (left_mtr.get_position()<encoderUnits)||(right_mtr.get_position()>-encoderUnits) ){
       if(left_mtr.get_position()>=encoderUnits){
         left_mtr2.move_velocity(0);
       }
@@ -251,7 +251,7 @@ void turn(int degrees,int speed){
     }
   }
   if(direction<0){
-    while( (left_mtr.get_position()>=-encoderUnits)||(right_mtr.get_position()<=encoderUnits) ){
+    while( (left_mtr.get_position()>-encoderUnits)||(right_mtr.get_position()<encoderUnits) ){
       if(left_mtr.get_position()<=-encoderUnits){
         left_mtr2.move_velocity(0);
       }
@@ -299,8 +299,8 @@ void aimTick(int ticks, bool wait){
   int direction = 2*(ticks>aimer.get_position())-1;
   aimerTarget = ticks;
 
-  aimer.move_absolute(ticks, 200*direction);
-  aimer.set_brake_mode(E_MOTOR_BRAKE_COAST);
+  aimer.move_absolute(ticks, 200);
+  aimer.set_brake_mode(E_MOTOR_BRAKE_HOLD);
 
   if(!wait){return;}
 
@@ -322,18 +322,18 @@ void shoot(){
   pros::Motor puncher(puncherPort);
   pros::Motor intake(intakePort,true);
 
+  delay(20);
   puncher.tare_position();
   intake.tare_position();
 
-  puncher.move_absolute(900, 200);
+  puncher.move(127);
   intake.move_velocity(0);
 
-  while(puncher.get_position()<900){
+  while(puncher.get_position()<1000){
     delay(5);
   }
   puncher.move_velocity(0);
   puncher.set_brake_mode(E_MOTOR_BRAKE_COAST);
-  delay(20);
 
 }
 
@@ -451,8 +451,8 @@ void intakeActive(int direction){
 ------------------------------------------------------------------------------*/
 void armPos(int level, bool wait){
   pros::Motor arm(armPort);
-  int carryPos = (45/360) * 900 * 12;
-  int placePos = (180/360) * 900 * 12;
+  int carryPos = ((45/360.0)*(64/12.0)*900);
+  int placePos = ((165/360.0)*(64/12.0)*900);
   if(!armCalibrated){
     arm.move_velocity(-50);
     delay(600);
