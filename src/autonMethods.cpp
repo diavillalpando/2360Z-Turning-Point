@@ -13,6 +13,10 @@ int aimerTarget;
 |   - Moves the robot a certain amount of inches[if Inches is negative it will drive backwards]
 ------------------------------------------------------------------------------------------------*/
 void drive(int inches, int speed){
+  double k = 1;
+  double limit = 750;
+  double t = 0;
+
   pros::Motor left_mtr(leftPort);
   pros::Motor left_mtr2(leftPort2);
   pros::Motor right_mtr(rightPort,true);
@@ -47,7 +51,10 @@ void drive(int inches, int speed){
         left_mtr2.modify_profiled_velocity(leftSpeed);
         right_mtr.modify_profiled_velocity(rightSpeed);
         right_mtr2.modify_profiled_velocity(rightSpeed);
-
+        t += 1;
+        if (t > limit) {
+          break;
+        }
       delay(5);
     }
   }else{

@@ -15,12 +15,13 @@ extern int visionPort;
 extern int indexSensor;
 
 //Vision Sensor
-extern double findFlag();
+extern double findFlag(int phase, bool print);
 extern double findFlag2();
 extern int vision_blue;
 extern int vision_red;
 extern int vision_green;
 extern int enemy_color;
+extern int timer1;
 
 //various shots
 extern int shotA;

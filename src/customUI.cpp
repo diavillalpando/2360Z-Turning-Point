@@ -51,10 +51,15 @@ void UIFunc(){
 			lv_label_set_text(teamLbl, "--BLUE--");
 		}
 
-		lv_label_set_text(description,autonDescription(mainAuton));
 		autonNum = "-" + std::to_string(mainAuton) + "-";
+
 		lv_label_set_text(currentAuton,autonNum.c_str());
-		main.set_text(2, 1, contText.c_str()); //Controller debugging screen
+
+		lv_label_set_text(description,autonDescription(mainAuton));
+
+
+
+		//main.set_text(2, 1, contText.c_str()); //Controller debugging screen
 		delay(500);
 	}
 }

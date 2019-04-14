@@ -52,11 +52,11 @@ void initialize(){  //First Thing to Run
 	indexSensor = 1;
 	//--definitions of the ticks for the various shots--//
 	shotA = 345;
-	shotB = 200;
+	shotB = 0;
 	shotX = 191;
 
 	shotA2 = 900;
-	shotB2 = 881;
+	shotB2 = 200;
 	shotX2 = 703;
 
 	//--Defines what vision sensor signatures correspond to what color--//

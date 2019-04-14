@@ -66,7 +66,6 @@ class ControllerCustom{
 	}
 };
 /* if(which==1){
-
 	rJoy = master.get_analog(ANALOG_RIGHT_Y);
 	lJoy = master.get_analog(ANALOG_LEFT_Y);
 	joy4 = master.get_analog(ANALOG_LEFT_X);

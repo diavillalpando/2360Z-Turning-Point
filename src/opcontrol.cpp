@@ -17,6 +17,7 @@ void opcontrol() {
 	pros::Motor arm(armPort,true);
 
 	//--Initializes instances of Controllers--//
+	//pros::Controller master(pros::E_CONTROLLER_MASTER);
 	ControllerCustom cont(1);
 	ControllerCustom partner(2);
 
@@ -25,12 +26,19 @@ void opcontrol() {
 	bool storeMode = false;
 	bool sensorTapped = false;
 
+	bool pressed = false;
+	int phase = 0;
+	int timer1 = 0;
+	int pos = 0;
+	bool timer1_ended = false;
+
 	arm.tare_position();
 	aimer.tare_position();
 	puncher.tare_position();
 	//aimer.set_brake_mode(E_MOTOR_BRAKE_HOLD);
 	aimTick(shotA, false);
 	//aimer.move_velocity(0);
+
 
   while(true){
 
@@ -39,7 +47,8 @@ void opcontrol() {
 		partner.update();
 
     //--Auton Testing--//
-		if(!cont.up&&cont.right&&!cont.down&&cont.left){
+		//if(!cont.up&&cont.right&&!cont.down&&cont.left){
+		if (cont.btnB){
 			autonomous();
 		}
 
@@ -151,23 +160,58 @@ void opcontrol() {
 		if(cont.down){armMode = 1;}
 		if(cont.up){armMode = 2;}
 
+
 		//--Vision Sensor Testing--//
-		if(cont.btnA){
-			double whereAreThou = findFlag();
+		timer1++;
+		if (timer1 > 50)
+		{
+			timer1 = 0;
+			pos = aimer.get_position();
+		  //master.print(0, 0, "Encoder Value: %d", pos);
+			timer1_ended = true;
 		}
+		if(cont.btnA){
+			if (pressed == false)
+			{
+				//Button press
+				phase = 0;
+			}
+			pressed = true;
+			double whereAreThou = findFlag(phase, timer1_ended);
+			if ((whereAreThou == true) && (phase != -1))
+			{
+				phase++;
+				if (phase >= 2)
+				{
+					phase = -1;
+				}
+			}
+			if (phase == -1)
+			{
+				aimer.move_velocity(partner.rJoy);
+				aimer.set_brake_mode(E_MOTOR_BRAKE_BRAKE);
+			}
+		}
+		else{
+			if (pressed == true)
+			{
+				//Button release
+				aimer.move_velocity(0);
+			}
+			pressed = false;
+			phase = 0;
+		}
+		timer1_ended = false;
+		std::cout << "Phase: " << timer1 << std::endl;
 		pros::delay(10);
-
 	}
-
 }
 
 /*
 HOW TO CONSOLE
 std::string text = "FlyWheel: "+ std::to_string(flywheel.get_actual_velocity()) + " RPM";
 contConsole(text.c_str());
-
   arm.set_brake_mode(E_MOTOR_BRAKE_HOLD);
 		arm.move_velocity(200*(cont.l1-cont.l2));
-
 indexButton = pros::c::adi_digital_read(indexSensor);
 */
